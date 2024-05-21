@@ -1,0 +1,145 @@
+@import url('https://fonts.cdnfonts.com/css/helvetica-neue-55');
+/* progress bar */
+.nav-progress{
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+}
+a.nav-link{
+    font-family: "Titillium Web", sans-serif;
+    font-weight: 700;
+    background: rgba(225, 225, 230, 1);
+    border-radius: 50%;
+    color: rgba(141, 141, 153, 1);
+    padding: 6px 13px;
+}
+
+a.nav-link.active {
+    color: #fff;
+    background: rgba(52, 153, 139, 1);
+} 
+/* progress bar */
+h1.form1-heading{
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 36px;
+}
+.form-input{
+    border: 1px solid rgb(176 176 176 / 51%);
+    border-radius: 6px;
+    padding: 16px;
+    text-align: center;
+    width: 100%;
+}
+/* input:focus-visible{
+    outline: none;
+} */
+.form-padding{
+    padding: 3rem;
+}
+.form-input::placeholder, .form-select, .form-input {
+    font-family: 'Karla', sans-serif;
+    color:rgba(0, 0, 0, 0.5);
+    font-weight: 400;
+    font-size: 20px;
+    text-align: center;
+}
+/* file input field */
+.file-input-container {
+    position: relative;
+}
+
+.file-label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.file-input2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1;
+    flex: 1;
+    padding-right: 30px; /* Adjust based on the image width */
+}
+
+.file-icon {
+    position: absolute;
+    /* right: 10px; */
+    left: 12px;
+    top: 69%;
+    transform: translateY(-50%);
+    width: 37px;
+    height: auto;
+}
+/* file input field */
+
+/* radio button styling */
+.radio-btn{
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid #80808040;
+    padding: 16px 34px;
+    border-radius: 10px;
+    text-align: center;
+    align-items: center;
+    width: 100%;
+    font-family: 'Karla', sans-serif;
+    color:rgba(0, 0, 0, 0.5);
+    font-weight: 400;
+    font-size: 20px;
+}
+.form-check-input:checked + .form-check-label {
+    color: #fff;
+    background: #34998B;
+    ;
+}
+.black{
+    background: black !important;
+    color: white !important;
+}
+.form-check-input{
+    visibility: hidden;
+}
+/* radio button styling */
+.label-text{
+    text-align: left;
+    padding: 16px 34px;
+}
+/* signature filed */
+input#signature-field {
+    color: rgba(0, 0, 0, 0.5);
+    border: rgba(193, 232, 254, 1);
+    background: rgba(193, 232, 254, 1);
+}
+
+input#submit {
+    background: #34998B;
+    color: #FFFFFF;
+}
+
+
+
+
+@media screen and (max-width: 600px) {
+    h1.form1-heading {
+        font-size: 20px;
+        text-align: center;
+    }
+    .form-padding {
+        padding: 1.5rem;
+    }
+    .nav-progress{
+        padding:10px;
+    }
+    .form-input::placeholder, .form-select, .form-input{
+        font-size: 14px;
+    }
+}
