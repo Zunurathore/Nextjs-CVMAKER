@@ -3,147 +3,17 @@ import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import styles from '../styles/home.module.css'
 import React, { useState } from 'react';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import router from "next/router";
 import Signup from "@/components/Signup";
 
+
+
 const Home = () => {
-   const [isModalOpen, setIsModalOpen] = useState(false);
-   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
    const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
    const toggleSignupModal = () => {
       setIsSignupModalOpen(!isSignupModalOpen);
     };
-
-   const toggleModal = () => {
-     setIsModalOpen(!isModalOpen);
-   };
-   const toggleLoginModal = () => {
-      setIsLoginModalOpen(!isLoginModalOpen);
-      setIsModalOpen(false);
-   };
-
-   const [firstname, setFirstName] = useState('')
-   const [lastname, setLastName] = useState('')
-   const [email, setEmail] = useState('')
-   const [password, setPassword] = useState('')
-
-
-   const handleChange = (e) => {
-      if (e.target.name === 'firstname') {
-          setFirstName(e.target.value);
-      } 
-      else if (e.target.name === 'lastname') {
-          setLastName(e.target.value);
-      }
-      else if (e.target.name === 'email') {
-          setEmail(e.target.value);
-       }
-  }
-
-  const handleLoginChange = (e) => {
-     console.log(e.target.name)
-   if (e.target.name === 'email') {
-      setEmail(e.target.value);
-   } 
-   else if (e.target.name === 'password') {
-      setPassword(e.target.value);
-   }
-   
-}
-  
-
-  
-   const handleSubmit = async (e)=>{
-      e.preventDefault();
-      const data = {firstname, lastname, email}
-      console.log(data)
-      const res =  await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, {
-         method: "POST",
-         headers: {
-         "Content-Type": "application/json",
-         },
-         body: JSON.stringify(data),
-      });
-        let response = await res.json()
-        console.log(response)
-        
-      if (response.status === 'success') {
-          // Show success message
-          toast.success(response.msg, {
-              position: "top-center",
-              autoClose: 2000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-          });
-      } else {
-          // Show error message from response
-          toast.error(response.msg, {
-              position: "top-center",
-              autoClose: 2000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-          });
-      }
-      setIsLoginModalOpen(false);
-      setFirstName('')
-      setLastName('')
-      setEmail('') 
-   }
-
-   const handleLoginSubmit = async (e) => {
-      e.preventDefault()
-      const data = {email, password}
-
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/login`, {
-        method: "POST", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-      let response = await res.json()
-
-      setEmail('')
-      setPassword('')
-      if(response.success) {
-      //   localStorage.setItem('token', response.token)
-      toast.success('Successfully Login!', {
-        position: "top-center",
-        autoClose: 1500,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        });
-
-        router.push(`${process.env.NEXT_PUBLIC_HOST}/dashboard`)
-        
-      }else{
-        toast.error(response.error, {
-          position: "top-center",
-          autoClose: 1500,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          });
-      }
-  };
 
   return (
    <>
@@ -151,17 +21,7 @@ const Home = () => {
       <title>CV Maker</title>
       <meta name="description" content="cvmaker.com - CV  Maker"/>
       </Head>
-      <ToastContainer
-         position="top-center"
-         autoClose={2000}
-         newestOnTop
-         closeOnClick
-         rtl={false}
-         pauseOnFocusLoss
-         draggable
-         pauseOnHover
-         theme="colors"
-      />
+
       <Nav/>
       <div className="container mx-auto mt-10 first-sec">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -169,84 +29,11 @@ const Home = () => {
                <h1 className={`${styles['first-sec-h1']} mt-20 ${styles['mobile-heading-h1']}`}>Garantierte <br/> Besichtigungen dank <br/> unserer Berwerbermappe</h1>
                <p className={`${styles['first-sec-p']} mt-5 ${styles['mobile-heading-p']}`}>Einfach schneller zur Traumwohnung: Mit Wohnungs Guru erstellst du in wenigen Klicks deine komplette, geprüfte  digitale Bewerbermappe.</p>
                <button onClick={toggleSignupModal} type="button" className={`${styles['jetzt-btn']} mt-10`}>
-        Jetzt Erstellen1
-      </button>
+                  Jetzt Erstellen
+               </button>
 
-      {isSignupModalOpen && <Signup onClose={toggleSignupModal} />}
-               <button onClick={toggleModal} type="button" className={`${styles['jetzt-btn']} mt-10`}>Jetzt Erstellen</button>
-               {isModalOpen && (
-                  <div id="default-modal" aria-hidden="true" className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 text-gray-900 dark:text-white" >
-                  <div className="relative p-4 w-full max-w-2xl max-h-full">
-                     <div className="relative bg-white rounded-lg shadow bg-white-700 text-gray-900">
-                        <div className="p-4 md:p-5 rounded-t bg-white-700">
-                        <button onClick={toggleModal} type="button" className={`${styles['btn-zuruck']}`} >
-                        <i className="fa fa-angle-left"></i> <span className={`${styles['btn-text']}`}>Zurück</span> 
-                        </button>
-                        </div>
-                        <div className="p-4 md:p-5 space-y-4">
-                           <h3 className={`${styles['modal-h3']}`}>Personalisieren Sie Ihren Lebenslauf, um loszulegen</h3>
-
-                           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4" novalidate>
-                              <div className="col-span-2">
-                              <p className={`${styles['modal-p']}`}>Geben Sie Ihre Daten ein, um ein personalisiertes Erlebnis zu erhalten und Ihren Lebenslauf in Ihrem eigenen Dashboard zu speichern.</p>
-                              </div>
-                              <div className="col-span-2 md:col-span-1">
-                              <label htmlFor="firstname" className={`${styles['form-label']} form-label`}>Vorname</label>
-                              <input onChange={handleChange} value={firstname} id="firstname" name="firstname" type="text" className={`${styles['modalform-input']} mt-2`}  placeholder='Max' required />
-                              </div>
-                              <div className="col-span-2 md:col-span-1">
-                              <label htmlFor="lastname" className={`${styles['form-label']} form-label`}>Nachname</label>
-                              <input onChange={handleChange} value={lastname} id="lastname" name="lastname" type="text" className={`${styles['modalform-input']} mt-2`} placeholder='Mustermann' required />
-                              </div>
-                              <div className="col-span-2">
-                              <label htmlFor="email" className={`${styles['form-label']} form-label`}>E-Mail</label>
-                              <input onChange={handleChange} value={email} id="email" name="email" type="email" className={`${styles['modalform-input']} mt-2`} required />
-                              </div>
-                              <div className="col-span-2">
-                              <p className={`${styles['modal-p']}`}>Indem Sie auf „Zur Lebenslauf-App" klicken, erstellen Sie ein Konto und stimmen unseren <strong>allgemeinen Geschäftsbedingungen</strong> und der <strong>Datenschutzerklärung</strong> zu.</p>
-                              <p className={`${styles['modal-p']}`}><strong>Sie haben bereits ein Konto? <span className="text-red-500"><button onClick={toggleLoginModal}>Jetzt einloggen</button></span></strong></p>
-                              </div>
-                              <div className="col-span-2 flex justify-end">
-                              <button className={`${styles['modal-submit-button']} btn`} type="submit">Zur Bewerbermappe</button>
-                              </div>
-                           </form>
-
-                        </div>
-                        
-                     </div>
-                  </div>
-                  </div>
-               )}
-               {isLoginModalOpen && (
-                  <div id="login-modal" aria-hidden="true" className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 text-gray-900 dark:text-white">
-                     <div className="relative p-4 w-full max-w-md max-h-full">
-                        <div className="relative bg-white rounded-lg shadow bg-white-700 text-gray-900">
-                        <div className="p-4 md:p-5 rounded-t bg-white-700">
-                           <button onClick={toggleLoginModal} type="button" className={`${styles['btn-zuruck']}`}>
-                              <i className="fa fa-angle-left"></i> <span className={`${styles['btn-text']}`}>Zurück</span>
-                           </button>
-                        </div>
-                        <div className="p-4 md:p-5 space-y-4">
-                           <h3 className={`${styles['modal-h3']}`}>Einloggen</h3>
-
-                           <form onSubmit={handleLoginSubmit} className="space-y-4" noValidate>
-                              <div>
-                              <label htmlFor="login-email" className={`${styles['form-label']} form-label`}>E-Mail</label>
-                              <input onChange={handleLoginChange} value={email} id="login-email" name="email" type="email" className={`${styles['modalform-input']} mt-2`} required />
-                              </div>
-                              <div>
-                              <label htmlFor="login-password" className={`${styles['form-label']} form-label`}>Passwort</label>
-                              <input onChange={handleLoginChange} value={password} id="login-password" name="password" type="password" className={`${styles['modalform-input']} mt-2`} required />
-                              </div>
-                              <div className="flex justify-end">
-                              <button className={`${styles['modal-submit-button']} btn`} type="submit">Einloggen</button>
-                              </div>
-                           </form>
-                        </div>
-                        </div>
-                     </div>
-                  </div>
-               )}             
+               {isSignupModalOpen && <Signup onClose={toggleSignupModal} />}
+                          
                <div className="mg:pl-5 pl-0 lg:mt-10 mt-3 md:space-x-1 space-x-0 lg:flex md:block items-center">
                   <span className={`${styles['checked']} fa fa-star`}></span>
                   <span className={`${styles['checked']} fa fa-star`}></span>

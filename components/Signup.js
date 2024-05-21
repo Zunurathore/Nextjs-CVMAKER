@@ -1,7 +1,29 @@
 import React, { useState } from 'react';
 import styles from '../styles/signup.module.css'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+
 
 const Signup = ({ onClose }) => {
+    const router = useRouter();
+    const [firstname, setFirstName] = useState('')
+    const [lastname, setLastName] = useState('')
+    const [email, setEmail] = useState('')
+   
+    const handleChange = (e) => {
+        if (e.target.name === 'firstname') {
+            setFirstName(e.target.value);
+        } 
+        else if (e.target.name === 'lastname') {
+            setLastName(e.target.value);
+        }
+        else if (e.target.name === 'email') {
+            setEmail(e.target.value);
+        }
+    }
+
     const handleSubmit = async (e)=>{
         e.preventDefault();
         const data = {firstname, lastname, email}
@@ -28,6 +50,9 @@ const Signup = ({ onClose }) => {
                 progress: undefined,
                 theme: "light",
             });
+            setTimeout(() => {
+                onClose();
+            }, 2000);
         } else {
             // Show error message from response
             toast.error(response.msg, {
@@ -41,28 +66,29 @@ const Signup = ({ onClose }) => {
                 theme: "light",
             });
         }
-        setIsLoginModalOpen(false);
         setFirstName('')
         setLastName('')
         setEmail('')
-        onClose(); 
+        
     }
-    const [firstname, setFirstName] = useState('')
-    const [lastname, setLastName] = useState('')
-    const [email, setEmail] = useState('')
-
-    const handleChange = (e) => {
-        if (e.target.name === 'firstname') {
-            setFirstName(e.target.value);
-        } 
-        else if (e.target.name === 'lastname') {
-            setLastName(e.target.value);
-        }
-        else if (e.target.name === 'email') {
-            setEmail(e.target.value);
+    const handleLinkClick = () => {
+        if (router.pathname === '/login') {
+            onClose();
         }
     }
   return (
+      <>
+       <ToastContainer
+         position="top-center"
+         autoClose={2000}
+         newestOnTop
+         closeOnClick
+         rtl={false}
+         pauseOnFocusLoss
+         draggable
+         pauseOnHover
+         theme="colors"
+      />
     <div id="signup-modal" aria-hidden="true" className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 text-gray-900 dark:text-white">
     <div className="relative p-4 w-full max-w-2xl max-h-full">
       <div className="relative bg-white rounded-lg shadow bg-white-700 text-gray-900">
@@ -92,7 +118,12 @@ const Signup = ({ onClose }) => {
             </div>
             <div className="col-span-2">
               <p className={`${styles['modal-p']}`}>Indem Sie auf „Zur Lebenslauf-App" klicken, erstellen Sie ein Konto und stimmen unseren <strong>allgemeinen Geschäftsbedingungen</strong> und der <strong>Datenschutzerklärung</strong> zu.</p>
-              <p className={`${styles['modal-p']}`}><strong>Sie haben bereits ein Konto? <span className="text-red-500"><button type="button" onClick={onClose}>Jetzt einloggen</button></span></strong></p>
+              <p className={`${styles['modal-p']}`}><strong>Sie haben bereits ein Konto? <span className="text-red-500">
+                <Link href="/login" onClick={handleLinkClick}>Jetzt einloggen</Link>
+                </span></strong>
+              </p>
+
+
             </div>
             <div className="col-span-2 flex justify-end">
               <button className={`${styles['modal-submit-button']} btn`} type="submit">Zur Bewerbermappe</button>
@@ -101,7 +132,8 @@ const Signup = ({ onClose }) => {
         </div>
       </div>
     </div>
-  </div>
+    </div>
+    </>
   )
 }
 
