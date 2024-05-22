@@ -1,7 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from '../styles/nav.module.css'
+import Signup from "@/components/Signup";
+import Link from "next/link";
 
 const Nav = () => {
+    const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
+
+    const toggleSignupModal = () => {
+       setIsSignupModalOpen(!isSignupModalOpen);
+     };
   return (
     <section className="container mx-auto">
          <nav className="bg-white border-gray-200 pt-8">
@@ -25,10 +32,16 @@ const Nav = () => {
                            <a href="#" className={`${styles['nav-item']} block`}>Support</a>
                         </li>
                         <li>
-                           <a href="#" className={`${styles['nav-item']} block`}>Register</a>
+                           {/* <a href="#" className={`${styles['nav-item']} block`}>Register</a> */}
+
+                           <button className={`${styles['nav-item']} block`} 
+                           onClick={toggleSignupModal}>Register</button>
+
                         </li>
                         <li>
+                        <Link href="/login" legacyBehavior>
                            <a href="#" className={`${styles['nav-item']} block`}>Login</a>
+                        </Link>
                         </li>
                         <li>
                            <a href="#" className={`${styles['nav-item']} nav-link get-started block`}>Get Started</a>
@@ -38,6 +51,7 @@ const Nav = () => {
                   </div>
                </div>
             </nav>
+            {isSignupModalOpen && <Signup onClose={toggleSignupModal} />}
     </section>
   )
 }

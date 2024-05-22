@@ -19,22 +19,15 @@ const generateRandomPassword = () => {
 const sendWelcomeEmail = async (firstname, lastname, email, password) => {
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
+            host: process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
             auth: {
-                user: 'kaylee50@ethereal.email',
-                pass: 'Zk5DvWQBmgvdtp7ncM'
+                user: process.env.SMTP_USERNAME,
+                pass: process.env.SMTP_PASSWORD
             }
         });
 
-        var transporter12 = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port: 2525,
-            auth: {
-              user: "16e816fed7caaf",
-              pass: "abdaf1aa280287"
-            }
-          });
+       
 
         const info = await transporter.sendMail({
             from: '"Wohnungs Guru" <maddison53@ethereal.email>',

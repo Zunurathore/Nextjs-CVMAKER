@@ -11,39 +11,53 @@ const Login = () => {
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
   const toggleSignupModal = () => {
-     setIsSignupModalOpen(!isSignupModalOpen);
-   };
+    setIsSignupModalOpen(!isSignupModalOpen);
+  };
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-    const handleChange = (e) => {
-        if(e.target.name == 'email') {
-          setEmail(e.target.value)
-        }
-        else if(e.target.name == 'password') {
-          setPassword(e.target.value)
-        }
+  const handleChange = (e) => {
+      if(e.target.name == 'email') {
+        setEmail(e.target.value)
       }
+      else if(e.target.name == 'password') {
+        setPassword(e.target.value)
+      }
+  }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        const data = {email, password}
-  
-        let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/login`, {
-          method: "POST", // or 'PUT'
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-        let response = await res.json()
+  const handleSubmit = async (e) => {
+      e.preventDefault()
+      const data = {email, password}
 
-        setEmail('')
-        setPassword('')
-        if(response.success) {
-        //   localStorage.setItem('token', response.token)
-        toast.success('Successfully Login!', {
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/login`, {
+        method: "POST", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      let response = await res.json()
+
+      setEmail('')
+      setPassword('')
+      if(response.success) {
+      //   localStorage.setItem('token', response.token)
+      toast.success('Successfully Login!', {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
+
+        router.push(`${process.env.NEXT_PUBLIC_HOST}/dashboard`)
+        
+      }else{
+        toast.error(response.error, {
           position: "top-center",
           autoClose: 1500,
           hideProgressBar: true,
@@ -53,37 +67,23 @@ const Login = () => {
           progress: undefined,
           theme: "light",
           });
-  
-          router.push(`${process.env.NEXT_PUBLIC_HOST}/dashboard`)
-          
-        }else{
-          toast.error(response.error, {
-            position: "top-center",
-            autoClose: 1500,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            });
-        }
-    };
+      }
+  };
   return (
     <div>
       <ToastContainer
-            position="top-center"
-            autoClose={1500}
-            limit={5}
-            hideProgressBar
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colors"
-          />
+        position="top-center"
+        autoClose={1500}
+        limit={5}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colors"
+       />
       <section className="p-4 mx-auto">
         <nav className="bg-white border-gray-200">
             <div className="flex flex-wrap items-center justify-between mx-auto p-4">
@@ -116,16 +116,8 @@ const Login = () => {
             <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
             Login
             </h2>
-            {/* <p className="mt-2 text-center text-sm text-gray-600">
-              Or
-              <Link
-                href={"/signup"}
-                className="font-medium text-pink-indigo hover:text-indigo-500 mx-2">
-                 Sign Up
-              </Link>
-            </p> */}
           </div>
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6" action="#" method="POST">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6" method="POST">
             <input type="hidden" name="remember" value="true" />
             <div className="space-y-px rounded-md shadow-sm">
             
@@ -190,4 +182,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login
