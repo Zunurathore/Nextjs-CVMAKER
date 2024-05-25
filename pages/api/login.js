@@ -20,7 +20,7 @@ const handler = async (req, res) => {
         let decryptedPass = bytes.toString(CryptoJS.enc.Utf8);
         if (user) {
             if (req.body.email == user.email && req.body.password == decryptedPass) {
-            var token = jwt.sign({email: user.email, firstname: user.firstname, lastname: user.lastname}, process.env.JWT_SECRET, {expiresIn:"1d"});
+            var token = jwt.sign({id: user._id , firstname: user.firstname, lastname: user.lastname}, process.env.JWT_SECRET, {expiresIn:"1d"});
             res.setHeader('Set-Cookie', serialize('token', token, { path: '/', httpOnly: true, sameSite: 'strict', maxAge: 60 * 60 * 24 }))
             res.status(200).json({success: true, token});
             }

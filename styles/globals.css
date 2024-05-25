@@ -30,5 +30,10 @@ details[open] summary::before {
   .footer-site{
     background-color: #F9FAFC;
   }
-
+  input:focus-visible{
+      outline: none;
+  }
+  .read_only_field{
+      background-color: #f4f2f4;
+  }
  
