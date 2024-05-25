@@ -63,3 +63,43 @@
     font-size: 14px;
   }
    /* form dashboard */
+
+   .tooltipOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 31% !important;
+    height: 100%;
+    pointer-events: none; /* Ensure only the modal or button can be clicked */
+  }
+  
+  .tooltipModal {
+    position: absolute;
+    background-color: #000;
+    color: #ffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    pointer-events: auto; /* Allow interaction with the tooltip */
+    border-radius: 10px;
+  }
+  
+  .tooltipContent {
+    padding: 20px;
+  }
+  
+  .closeButton {
+    margin-top: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .email-label{
+    display: flex;
+  }
+  .tooltip-btn{
+    margin-left: 8px;
+    border: 2px solid grey;
+    border-radius: 52%;
+    padding: 0px 6px;
+  }

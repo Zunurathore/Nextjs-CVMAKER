@@ -4,6 +4,7 @@ import Link from 'next/link';
 import styles from '../../styles/profile.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import TooltipButton from '@/components/Tooltip';
 
 
 const Profile = () => {
@@ -127,7 +128,10 @@ const Profile = () => {
                 </div>
                 <div className="grid grid-cols-1 gap-4 mt-5">
                   <div>
-                    <label className={`${styles['loginform-label']}`}>E-Mail-Adresse</label>
+                  <label className={`${styles['loginform-label']} ${styles['email-label']} mt-1`}>
+                                    E-Mail-Adresse  <TooltipButton />
+                    </label>
+
                     <div className={`${styles['input-field']} read_only_field mt-1`}>
                       <input
                         type="email"
