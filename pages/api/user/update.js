@@ -14,7 +14,7 @@ const handler = async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded)
+
     const { firstname, lastname } = req.body;
 
     const user = await User.findOneAndUpdate(

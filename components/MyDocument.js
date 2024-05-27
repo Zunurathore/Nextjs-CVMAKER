@@ -16,9 +16,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
+    margin:"auto",
     marginBottom: 10,
-    width: 9,
-    height: 14,
+    width: 50,
+    height: 50,
+    borderRadius:50,
   },
   table: {
     display: "table",
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   tableCol: {
-    width: "33.3333333333%",
+    width: "50%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#000",
@@ -52,21 +54,27 @@ const styles = StyleSheet.create({
 
 // Create Document Component
 const MyDocument = ({ profileData }) => {
+  // console.log(profileData);
   const rows = [
-    { field: "Vorname", value: profileData.vorname, value2: "Test" },
-    { field: "Nachname", value: profileData.nachname, value2: "Test" },
-    { field: "hausnummer", value: profileData.hausnummer, value2: "Test" },
-    { field: "Straße", value: profileData.strabe, value2: "Test" },
-    { field: "PLZ", value: profileData.PLZ, value2: "Test" },
-    { field: "Ort", value: profileData.Ort, value2: "Test" },
-    { field: "E-Mail", value: profileData.email, value2: "Test" },
-    { field: "Tel. Mobil", value: profileData.tel, value2: "Test" },
-    { field: "Geburtsdatum", value: profileData.geburtsdatum, value2: "Test" },
-    { field: "Ausgeübter Beruf", value: profileData.ausgeübterBeruf, value2: "Test" },
-    { field: "Arbeitgeber", value: profileData.arbeitgeber, value2: "Test" },
-    { field: "Nettoeinkommen (€)", value: profileData.income, value2: "Test" }
+    { field: "Vorname", value: profileData.vorname },
+    { field: "Nachname", value: profileData.nachname},
+    { field: "Straße", value: profileData.strabe },
+    { field: "hausnummer", value: profileData.hausnummer },
+    { field: "PLZ", value: profileData.PLZ },
+    { field: "Ort", value: profileData.Ort },
+    { field: "E-Mail", value: profileData.email },
+    { field: "Tel. Mobil", value: profileData.tel },
+    { field: "Geburtsdatum", value: profileData.geburtsdatum },
+    { field: "Ausgeübter Beruf", value: profileData.ausgeübterBeruf },
+    { field: "Arbeitgeber", value: profileData.arbeitgeber },
+    { field: "Nettoeinkommen (€)", value: profileData.income },
+    { field: "textarea1", value: profileData.textarea1 },
+    { field: "textarea2", value: profileData.textarea2 },
+    { field: "textarea3", value: profileData.textarea3 },
+    { field: "textarea4", value: profileData.textarea4 },
+    { field: "textarea5", value: profileData.textarea5 }
   ];
-
+ 
   return (
     <Document>
       <Page style={styles.page}>
@@ -74,7 +82,8 @@ const MyDocument = ({ profileData }) => {
           <Text style={styles.title}>Persönliche Daten: Mieter 1</Text>
           <Image
             style={styles.image}
-            src="/arrow.png"
+            src={`${profileData.inputfoto}`}
+            // src="/uploads/abCapture.PNG"
             alt="Description of the image"
           />
           <View style={styles.table}>
@@ -86,9 +95,6 @@ const MyDocument = ({ profileData }) => {
               <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>Value1</Text>
               </View>
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>Value2</Text>
-              </View>
             </View>
             {/* Table Rows */}
             {rows.map((row, index) => (
@@ -98,9 +104,6 @@ const MyDocument = ({ profileData }) => {
                 </View>
                 <View style={styles.tableCol}>
                   <Text style={styles.tableCell}>{row.value}</Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>{row.value2}</Text>
                 </View>
               </View>
             ))}
