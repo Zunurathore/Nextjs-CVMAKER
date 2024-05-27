@@ -20,5 +20,5 @@ export function middleware(request) {
 
 // Middleware config to match specific paths
 export const config = {
-  matcher: [ '/signup', '/login', '/dashboard', '/form', '/account/settings'],
+  matcher: [ '/signup', '/login', '/dashboard', '/form', '/account/:path*'],
 };
