@@ -2,7 +2,6 @@
 import jwt from 'jsonwebtoken';
 import { parseCookies } from 'nookies';
 const {connectDb}  = require("@/helper/db");
-import Profile from '@/models/Profile'; // Adjust the path according to your project structure
 import User from '@/models/User'; // Ensure you have the User model
 
 const handler = async (req, res) => {
