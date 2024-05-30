@@ -38,6 +38,7 @@ const application = () => {
     const { name, value, files } = e.target;
     if (name === 'photo') {
       setPhoto(files[0]);
+      
       if (files[0]) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -96,11 +97,31 @@ const application = () => {
       });
 
       const response = await res.json();
-      if (response.success) {
-        toast.success('Form submitted successfully!');
-      } else {
-        toast.error(`Form submission failed: ${response.error}`);
-      }
+      if(response.success) {
+        //   localStorage.setItem('token', response.token)
+        toast.success('Form submitted successfully', {
+          position: "top-center",
+          autoClose: 1500,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          });
+          router.push(`${process.env.NEXT_PUBLIC_HOST}/account/allapplications`)
+        }else{
+          toast.error(response.error, {
+            position: "top-center",
+            autoClose: 1500,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            });
+        }
     } catch (error) {
       toast.error('Form submission failed: An error occurred');
     }
@@ -150,6 +171,7 @@ const application = () => {
     // </div>
     <div className="min-h-full">
         <UserNav />
+        <ToastContainer />
         <div className="mt-7">
             <ul className={`nav ${styles['nav-progress']} flex justify-around`}>
                 <li className="nav-item">

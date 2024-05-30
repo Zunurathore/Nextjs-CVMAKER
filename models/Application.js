@@ -15,7 +15,7 @@ const ApplicationSchema = new mongoose.Schema({
   ausgeübterBeruf: { type: String, required: true },
   arbeitgeber: { type: String, required: true },
   income: { type: String, required: true },
-  inputfoto: { type: String, required: true },
+  inputfoto: { type: String },
   textarea1: { type: String },
   textarea2: { type: String },
   textarea3: { type: String },

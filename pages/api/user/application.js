@@ -4,7 +4,7 @@ import path from 'path';
 import Application from '@/models/Application';
 import jwt from 'jsonwebtoken';
 import { parseCookies } from 'nookies';
-const {connectDb}  = require("@/helper/db");
+const { connectDb } = require('@/helper/db');
 import User from '@/models/User'; // Ensure you have the User model
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,30 +18,36 @@ const handler = async (req, res) => {
   await connectDb();
 
   if (req.method === 'POST') {
-
     const cookies = parseCookies({ req });
     const token = cookies.token;
 
     if (!token) {
       return res.status(401).json({ success: false, message: 'Not authenticated' });
     }
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const userEmail = decoded.id; // Assuming your token payload has the user email
 
-      // Fetch the user from the database using the email
-      const user = await User.findOne({ _id: userEmail });
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
 
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
+    const userEmail = decoded.id; // Assuming your token payload has the user ID
+
+    // Fetch the user from the database using the email
+    const user = await User.findOne({ _id: userEmail });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
 
     const form = new IncomingForm();
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    
+
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
-    
+
     form.uploadDir = uploadDir;
     form.keepExtensions = true;
 
@@ -51,10 +57,6 @@ const handler = async (req, res) => {
         return res.status(500).json({ success: false, error: 'Error parsing the form' });
       }
 
-      // console.log('Fields:', fields);
-      // console.log('Files:', files);
-
-     
       const vorname = Array.isArray(fields.vorname) ? fields.vorname[0] : fields.vorname;
       const nachname = Array.isArray(fields.nachname) ? fields.nachname[0] : fields.nachname;
       const strabe = Array.isArray(fields.strabe) ? fields.strabe[0] : fields.strabe;
@@ -72,55 +74,60 @@ const handler = async (req, res) => {
       const textarea3 = Array.isArray(fields.textarea3) ? fields.textarea3[0] : fields.textarea3;
       const textarea4 = Array.isArray(fields.textarea4) ? fields.textarea4[0] : fields.textarea4;
       const textarea5 = Array.isArray(fields.textarea5) ? fields.textarea5[0] : fields.textarea5;
+
       const photo = files.photo;
+      let fullFileName = null;
 
-      // If photo is an array, get the first item
-      const photoFile = Array.isArray(photo) ? photo[0] : photo;
+      if (photo) {
+        const photoFile = Array.isArray(photo) ? photo[0] : photo;
+        if (!photoFile || !photoFile.filepath || !photoFile.originalFilename) {
+          console.error('Filepath or originalFilename missing:', photoFile);
+          return res.status(400).json({ success: false, error: 'Filepath or originalFilename missing' });
+        }
 
-      if (!photoFile || !photoFile.filepath || !photoFile.originalFilename) {
-        console.error('Filepath or originalFilename missing:', photoFile);
-        return res.status(400).json({ success: false, error: 'Filepath or originalFilename missing' });
-      }
         const uniqueId = uuidv4();
         const fileExtension = photoFile.originalFilename.split('.').pop();
         const uniqueFileName = `${uniqueId}.${fileExtension}`;
-      const newPath = path.join(uploadDir, uniqueFileName);
+        const newPath = path.join(uploadDir, uniqueFileName);
+        fullFileName = `/uploads/${uniqueFileName}`;
 
-      fs.rename(photoFile.filepath, newPath, async (err) => {
-        if (err) {
+        try {
+          await fs.promises.rename(photoFile.filepath, newPath);
+        } catch (err) {
           console.error('Error moving file:', err);
           return res.status(500).json({ success: false, error: 'Error moving file' });
         }
-        try {
-          const newForm = new Application({
-            userId: user._id,
-            vorname,
-            nachname,
-            strabe,
-            hausnummer,
-            PLZ,
-            Ort,
-            email,
-            tel,
-            geburtsdatum,
-            ausgeübterBeruf,
-            arbeitgeber,
-            income,
-            textarea1,
-            textarea2,
-            textarea3,
-            textarea4,
-            textarea5,
-            inputfoto: `/uploads/${uniqueFileName}`,
-          });
-          await newForm.save();
+      }
 
-          return res.status(200).json({ success: true, message: 'Form submitted successfully' });
-        } catch (error) {
-          console.error('Error saving data:', error);
-          return res.status(500).json({ success: false, error: 'Error saving data' });
-        }
-      });
+      try {
+        const newForm = new Application({
+          userId: user._id,
+          vorname,
+          nachname,
+          strabe,
+          hausnummer,
+          PLZ,
+          Ort,
+          email,
+          tel,
+          geburtsdatum,
+          ausgeübterBeruf,
+          arbeitgeber,
+          income,
+          textarea1,
+          textarea2,
+          textarea3,
+          textarea4,
+          textarea5,
+          inputfoto: fullFileName,
+        });
+
+        await newForm.save();
+        return res.status(200).json({ success: true, message: 'Form submitted successfully' });
+      } catch (error) {
+        console.error('Error saving data:', error);
+        return res.status(500).json({ success: false, error: 'Error saving data' });
+      }
     });
   } else {
     res.status(405).json({ success: false, error: 'Method not allowed' });

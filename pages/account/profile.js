@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import UserNav from '@/components/UserNav';
 import Link from 'next/link';
 import styles from '../../styles/profile.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TooltipButton from '@/components/Tooltip';
+import Image from 'next/image';
+
+
+
+
 
 
 const Profile = () => {
-  const [user, setUser] = useState({ firstname: '', lastname: '', email: '' });
+  const [user, setUser] = useState({ firstname: '', lastname: '', email: '', profileimg: '' });
+  const [photo, setPhoto] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,7 +46,6 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch('/api/user/update', {
         method: 'POST',
@@ -52,7 +57,6 @@ const Profile = () => {
           lastname: user.lastname
         })
       });
-
       const data = await res.json();
 
       if (res.ok) {
@@ -64,7 +68,78 @@ const Profile = () => {
       toast.error('Failed to update profile');
     }
   };
+  const fileInputRef = useRef(null);
 
+  // Function to trigger click on file input
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  
+  // Function to handle file selection
+  const handleFileChange = async (event) => {
+    const { name, files } = event.target;
+
+    if (name === 'photo') {
+        const uploadedFile = files[0];
+        if (name === 'photo' && uploadedFile && uploadedFile.type.startsWith('image/')) {
+            setPhoto(files[0]);
+        } else {
+            // Display an error message or handle the case where the uploaded file is not an image
+            toast.error("File type is incorect!", {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+          });
+            return;
+        }
+    }
+
+    const formData = new FormData();
+    formData.append('photo', files[0]); // Use files[0] directly here
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/user/profileimg`, {
+        method: "POST",
+        body: formData,
+        headers: {
+            'Accept': 'application/json', // Ensure the server knows you expect JSON
+        }
+    });
+
+    const data = await response.json();
+    setUser(prevUser => ({ ...prevUser, profileimg: data.profileimg }));
+    if (response.success) {
+        toast.success(response.message, {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+    } else {
+        toast.error(response.message, {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+    }
+
+    // console.log('Selected file:', files[0]);
+};
+  
   return (
     <>
       <UserNav />
@@ -91,7 +166,6 @@ const Profile = () => {
               </ul>
             </div>
           </nav>
-
           <div className="flex gap-4 mt-4">
             <div className={`${styles['two-third']} w-2/3 p-10`}>
               <h3 className={`${styles['heading-personl']}`}>Persönliche Daten</h3>
@@ -157,6 +231,32 @@ const Profile = () => {
               <p className={`${styles['p-login']} mt-4`}>
                 Für die besten Ergebnisse verwenden Sie ein Bild mit mindestens 600 x 600 Pixeln.
               </p>
+              <div className="mt-5 flex flex-col justify-center items-center">
+              {user !== null ? (
+                  <Image
+                    src={user.profileimg || "/image.png"}
+                    alt="Profile"
+                    width={200}
+                    height={200}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <div>No user profile image available</div>
+                )}
+                {/* Hidden file input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                  name='photo'
+                />
+                {/* Button to trigger file input */}
+              </div>
+              <div className='mt-5 flex justify-center items-center gap-x-24'>
+                <button className={`${styles['update-btn']} leading-6 shadow-sm px-3 py-1.5`} onClick={handleButtonClick}>Change</button>
+                <button className={`${styles['update-btn']} leading-6 shadow-sm px-3 py-1.5`} >Delete</button>
+              </div>
             </div>
           </div>
         </div>
