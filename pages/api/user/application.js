@@ -4,9 +4,10 @@ import path from 'path';
 import Application from '@/models/Application';
 import jwt from 'jsonwebtoken';
 import { parseCookies } from 'nookies';
-const { connectDb } = require('@/helper/db');
+import { connectDb } from '@/helper/db';
 import User from '@/models/User'; // Ensure you have the User model
 import { v4 as uuidv4 } from 'uuid';
+import { put } from '@vercel/blob';
 
 export const config = {
   api: {
@@ -25,14 +26,8 @@ const handler = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Not authenticated' });
     }
 
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-      return res.status(401).json({ success: false, message: 'Invalid token' });
-    }
-
-    const userEmail = decoded.id; // Assuming your token payload has the user ID
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userEmail = decoded.id; // Assuming your token payload has the user email
 
     // Fetch the user from the database using the email
     const user = await User.findOne({ _id: userEmail });
@@ -42,13 +37,7 @@ const handler = async (req, res) => {
     }
 
     const form = new IncomingForm();
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    form.uploadDir = uploadDir;
+    
     form.keepExtensions = true;
 
     form.parse(req, async (err, fields, files) => {
@@ -74,32 +63,30 @@ const handler = async (req, res) => {
       const textarea3 = Array.isArray(fields.textarea3) ? fields.textarea3[0] : fields.textarea3;
       const textarea4 = Array.isArray(fields.textarea4) ? fields.textarea4[0] : fields.textarea4;
       const textarea5 = Array.isArray(fields.textarea5) ? fields.textarea5[0] : fields.textarea5;
-
       const photo = files.photo;
-      let fullFileName = null;
+      let fullfilename = null
 
-      if (photo) {
+      if(photo){
+        // If photo is an array, get the first item
         const photoFile = Array.isArray(photo) ? photo[0] : photo;
+
         if (!photoFile || !photoFile.filepath || !photoFile.originalFilename) {
           console.error('Filepath or originalFilename missing:', photoFile);
           return res.status(400).json({ success: false, error: 'Filepath or originalFilename missing' });
         }
 
-        const uniqueId = uuidv4();
-        const fileExtension = photoFile.originalFilename.split('.').pop();
-        const uniqueFileName = `${uniqueId}.${fileExtension}`;
-        const newPath = path.join(uploadDir, uniqueFileName);
-        fullFileName = `/uploads/${uniqueFileName}`;
+        const fileContent = fs.readFileSync(photoFile.filepath);
+        const uniqueFileName = `${uuidv4()}_${photoFile.originalFilename}`;
+        const blob = await put(uniqueFileName, fileContent, {
+          access: 'public',
+        });
 
-        try {
-          await fs.promises.rename(photoFile.filepath, newPath);
-        } catch (err) {
-          console.error('Error moving file:', err);
-          return res.status(500).json({ success: false, error: 'Error moving file' });
-        }
+        fullfilename = blob.url
       }
+      
 
       try {
+  
         const newForm = new Application({
           userId: user._id,
           vorname,
@@ -119,11 +106,11 @@ const handler = async (req, res) => {
           textarea3,
           textarea4,
           textarea5,
-          inputfoto: fullFileName,
+          inputfoto: fullfilename, // Save the URL of the uploaded file
         });
-
         await newForm.save();
-        return res.status(200).json({ success: true, message: 'Form submitted successfully' });
+
+        return res.status(200).json({ success: true, message: 'Form submitted successfully'});
       } catch (error) {
         console.error('Error saving data:', error);
         return res.status(500).json({ success: false, error: 'Error saving data' });
